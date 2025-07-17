@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Mart-Market</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'market.css' %}">
+
+    <link rel="stylesheet" href="{% static 'register.css' %}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    {% include 'components/navbar.html' %}
+
+    <div class="content" style="padding: 0px 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1>Welcome to Market, {{ request.user }}</h1>
+
+            <!-- Search Box -->
+            <form method="POST" action="{% url 'stockSearch' %}" style="display: flex; align-items: center;">
+                {% csrf_token %}
+                <input type="text" name="search" placeholder="Search stocks..." class="search-input"
+                    style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px 0 0 6px; outline: none; width: 200px;">
+                <button type="submit" class="search-btn"
+                    style="padding: 8px 12px; background-color: #007bff; color: white; border: none; border-radius: 0 6px 6px 0; cursor: pointer;">🔍</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div>
+        <div>
+            <h1>Binance</h1>
+            <span class="ticker">BINANCE:ETHUSDT</span>
+            <span class="price" id="price-BINANCE:ETHUSDT">$100</span>
+        </div>
+        <div class="container">
+            {% if not user.is_authenticated %}
+            <div class="home-div">
+                <h1 class="heading">Welcome To Market</h1>
+                <!-- <a href="{% url 'login' %}">
+            <button class="login-button">login</button>
+        </a> -->
+            </div>
+
+            {% else %}
+            <h1 class="heading">Welcome To Market, {{user}}</h1>
+            {% endif %}
+
+
+            <div class="grid">
+                {% for i in data %}
+                {% include 'components/card.html' with ticker=i.ticker name=i.name price=i.curr_price %}
+                {% empty %}
+                <p>No stocks available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% include 'components/footer_part.html' %}
+</body>
+<script src="{% static 'price_update.js' %}"></script>
+
+</html>
